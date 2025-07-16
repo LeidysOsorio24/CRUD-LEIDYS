@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Productos</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet">
+</head>
+<body>
+    <header>
+        <h1>Lista de Productos</h1>
+        <p style="margin:0.5rem 0 0 0; font-size:1.1rem; font-weight:400;">Consulta y gestiona todos los productos registrados</p>
+        <nav aria-label="Menú principal">
+            <ul style="list-style:none; padding:0; margin:0; display:flex; justify-content:center; gap:2rem;">
+                <li><a href="index.html"><span class="material-symbols-outlined" style="vertical-align:middle;">home</span> Inicio</a></li>
+                <li><a href="create.html"><span class="material-symbols-outlined" style="vertical-align:middle;">add_circle</span> Crear Producto</a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <section style="overflow-x:auto;">
+            <table class="products-table">
+                <thead>
+                    <tr>
+                        <th><span class="material-symbols-outlined" style="vertical-align:middle;">image</span> Imagen</th>
+                        <th><span class="material-symbols-outlined" style="vertical-align:middle;">label</span> Nombre</th>
+                        <th><span class="material-symbols-outlined" style="vertical-align:middle;">attach_money</span> Precio Regular</th>
+                        <th><span class="material-symbols-outlined" style="vertical-align:middle;">sell</span> Precio</th>
+                        <th><span class="material-symbols-outlined" style="vertical-align:middle;">description</span> Descripción</th>
+                        <th><span class="material-symbols-outlined" style="vertical-align:middle;">check_circle</span> Estado</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Aquí se llenarán los productos desde Firestore -->
+                </tbody>
+            </table>
+        </section>
+    </main>
+    <footer style="text-align:center; margin-top:2rem; color:#888; font-size:0.95rem;">
+        &copy; 2024 CRUD Productos. Desarrollado por Leidys Osorio.
+    </footer>
+
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+    <script>
+      const firebaseConfig = {
+        apiKey: "AIzaSyDsgNwl8eSne0ZaBjvFTie6EcgDzO4QBfU",
+        authDomain: "crud-b2408.firebaseapp.com",
+        projectId: "crud-b2408",
+        storageBucket: "crud-b2408.appspot.com",
+        messagingSenderId: "268984303673",
+        appId: "1:268984303673:web:3cb36c59e364ccaa4acde8",
+        measurementId: "G-KWX2P4QDRV"
+      };
+      firebase.initializeApp(firebaseConfig);
+      const db = firebase.firestore();
+
+      function renderProductRow(product) {
+        return `<tr>
+          <td><img src="${product.imagen || 'https://img.icons8.com/fluency/48/box.png'}" alt="Producto" width="60"></td>
+          <td>${product.nombre}</td>
+          <td>$${product.precio_regular.toFixed(2)}</td>
+          <td>$${product.precio.toFixed(2)}</td>
+          <td>${product.descripcion}</td>
+          <td>${product.estado.charAt(0).toUpperCase() + product.estado.slice(1)}</td>
+        </tr>`;
+      }
+
+      db.collection('product').orderBy('creado', 'desc').onSnapshot(snapshot => {
+        const tbody = document.querySelector('.products-table tbody');
+        tbody.innerHTML = '';
+        snapshot.forEach(doc => {
+          const product = doc.data();
+          tbody.innerHTML += renderProductRow(product);
+        });
+      });
+    </script>
+</body>
+</html> 

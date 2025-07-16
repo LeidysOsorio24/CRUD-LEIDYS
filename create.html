@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crear Producto</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet">
+</head>
+<body>
+    <header>
+        <h1>Crear Producto</h1>
+        <p style="margin:0.5rem 0 0 0; font-size:1.1rem; font-weight:400;">Agrega un nuevo producto a tu inventario</p>
+        <nav aria-label="Menú principal">
+            <ul style="list-style:none; padding:0; margin:0; display:flex; justify-content:center; gap:2rem;">
+                <li><a href="index.html"><span class="material-symbols-outlined" style="vertical-align:middle;">home</span> Inicio</a></li>
+                <li><a href="products.html"><span class="material-symbols-outlined" style="vertical-align:middle;">inventory_2</span> Mostrar Productos</a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <form class="product-form" enctype="multipart/form-data" style="max-width:500px; margin:0 auto; background:#fff; padding:2rem; border-radius:8px; box-shadow:0 2px 8px rgba(0,0,0,0.05);">
+            <label for="nombre">Nombre del Producto:</label>
+            <input type="text" id="nombre" name="nombre" required placeholder="Ej: Camiseta">
+
+            <label for="precio_regular">Precio Regular:</label>
+            <input type="number" id="precio_regular" name="precio_regular" step="0.01" required placeholder="Ej: 100.00">
+
+            <label for="precio">Precio:</label>
+            <input type="number" id="precio" name="precio" step="0.01" required placeholder="Ej: 80.00">
+
+            <label for="descripcion">Descripción:</label>
+            <textarea id="descripcion" name="descripcion" required placeholder="Describe el producto..."></textarea>
+
+            <label for="estado">Estado:</label>
+            <select id="estado" name="estado" required>
+                <option value="activo">Activo</option>
+                <option value="inactivo">Inactivo</option>
+            </select>
+
+            <label for="imagen">Imagen del Producto:</label>
+            <input type="file" id="imagen" name="imagen" accept="image/*">
+
+            <button type="submit"><span class="material-symbols-outlined" style="vertical-align:middle;">add_circle</span> Crear Producto</button>
+        </form>
+    </main>
+    <footer style="text-align:center; margin-top:2rem; color:#888; font-size:0.95rem;">
+        &copy; 2024 CRUD Productos. Desarrollado por Leidys Osorio.
+    </footer>
+
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-storage-compat.js"></script>
+    <script>
+      const firebaseConfig = {
+        apiKey: "AIzaSyDsgNwl8eSne0ZaBjvFTie6EcgDzO4QBfU",
+        authDomain: "crud-b2408.firebaseapp.com",
+        projectId: "crud-b2408",
+        storageBucket: "crud-b2408.appspot.com",
+        messagingSenderId: "268984303673",
+        appId: "1:268984303673:web:3cb36c59e364ccaa4acde8",
+        measurementId: "G-KWX2P4QDRV"
+      };
+      firebase.initializeApp(firebaseConfig);
+      const db = firebase.firestore();
+      // const storage = firebase.storage();
+
+      document.querySelector('.product-form').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        const nombre = document.getElementById('nombre').value;
+        const precio_regular = parseFloat(document.getElementById('precio_regular').value);
+        const precio = parseFloat(document.getElementById('precio').value);
+        const descripcion = document.getElementById('descripcion').value;
+        const estado = document.getElementById('estado').value;
+        // const imagenFile = document.getElementById('imagen').files[0];
+        try {
+          await db.collection('product').add({
+            nombre,
+            precio_regular,
+            precio,
+            descripcion,
+            estado,
+            creado: firebase.firestore.FieldValue.serverTimestamp()
+          });
+          alert('Producto creado exitosamente');
+          this.reset();
+        } catch (error) {
+          alert('Error al crear el producto: ' + error.message);
+        }
+      });
+    </script>
+</body>
+</html> 
